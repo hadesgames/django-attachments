@@ -8,7 +8,7 @@ from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from attachments.models import Attachment
-from attachments.forms import AttachmentForm
+from attachments.forms import AttachmentForm, AttachmentDisplayNameForm
 
 def add_url_for_obj(obj):
     return reverse('add_attachment', kwargs={
@@ -27,12 +27,11 @@ def add_attachment(request, app_label, module_name, pk,
     if model is None:
         return HttpResponseRedirect(next)
     obj = get_object_or_404(model, pk=pk)
-    form = AttachmentForm(request.POST, request.FILES)
-
+    form = AttachmentDisplayNameForm(request.POST, request.FILES)
     if form.is_valid():
-        form.save(request, obj)
-        messages.add_message(request, messages.SUCCESS, 'Your attachement was uploaded.')
-        return HttpResponseRedirect(next)
+        att = form.save(request, obj)
+        #messages.add_message(request, messages.SUCCESS, 'Your attachement was uploaded.')
+        return HttpResponse(att.id, content_type="application/json")
     else:
         template_context = {
             'form': form,

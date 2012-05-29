@@ -13,8 +13,8 @@ class AttachmentForm(forms.ModelForm):
     def save(self, request, obj, *args, **kwargs):
         self.instance.creator = request.user
         self.instance.content_type = ContentType.objects.get_for_model(obj)
-        self.instance.object_id = obj.id
-        super(AttachmentForm, self).save(*args, **kwargs)
+        self.instance.object_id = obj.pk
+        return super(AttachmentForm, self).save(*args, **kwargs)
 
 class AttachmentDisplayNameForm(AttachmentForm):
     class Meta(AttachmentForm.Meta):
